@@ -1,0 +1,25 @@
+name: build-win7-probe
+on:
+  push:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Unpack project
+        shell: pwsh
+        run: Expand-Archive -Path win7-probe-bc-v1.zip -DestinationPath probe -Force
+      - name: Install
+        working-directory: probe
+        run: npm install
+      - name: Build
+        working-directory: probe
+        run: npm run dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Win7Probe-x64
+          path: probe/dist/win-unpacked
